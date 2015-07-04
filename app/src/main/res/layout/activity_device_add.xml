@@ -1,0 +1,21 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.naton.hardware.ui.device.DeviceAddActivity">
+
+    <EditText
+        android:id="@+id/deviceET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="设备编号" />
+
+    <Button
+        android:id="@+id/addDevice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_below="@+id/deviceET"
+        android:text="添 加" />
+
+</RelativeLayout>
