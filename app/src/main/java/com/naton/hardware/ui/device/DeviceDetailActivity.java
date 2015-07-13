@@ -1,6 +1,8 @@
 package com.naton.hardware.ui.device;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -56,6 +58,27 @@ public class DeviceDetailActivity extends BaseActivity implements AdapterView.On
         setContentView(R.layout.activity_device_detail);
         final String deviceId = getIntent().getStringExtra("deviceId");
         setTitleText("设备" + deviceId);
+        setRightImage(R.drawable.ic_delete);
+        setRightImageListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(DeviceDetailActivity.this)
+                        .setTitle("请确认")
+                        .setMessage("确认删除当前设备吗？")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteDevice(deviceId);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .show();
+
+            }
+        });
 
         if (!TextUtils.isEmpty(deviceId))
             fetchDeviceInfo(deviceId);
@@ -64,7 +87,7 @@ public class DeviceDetailActivity extends BaseActivity implements AdapterView.On
         delBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteDevice(deviceId);
+
             }
         });
 

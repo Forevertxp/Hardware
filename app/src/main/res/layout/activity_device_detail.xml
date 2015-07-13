@@ -87,13 +87,28 @@
         android:spacing="16dp"
         android:visibility="gone"/>
 
-    <Button
-        android:id="@+id/delBtn"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="删除设备"
-        android:textSize="18sp"
-        android:textColor="@color/red"
-        android:layout_margin="15dp" />
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="抓取快照"
+            android:textSize="18sp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/delBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="删除照片"
+            android:textSize="18sp"
+            android:textColor="@color/red"
+            android:layout_margin="10dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
 
 </LinearLayout>

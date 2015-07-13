@@ -2,22 +2,34 @@ package com.naton.hardware.ui.data;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.naton.hardware.R;
 import com.naton.hardware.http.manager.AuthManager;
 import com.naton.hardware.http.manager.RestManager;
 import com.naton.hardware.http.request.DeviceDataRequest;
+import com.naton.hardware.http.request.DeviceRequest;
 import com.naton.hardware.http.result.DataResult;
+import com.naton.hardware.http.result.DeviceInfoResult;
 import com.naton.hardware.http.service.DataService;
+import com.naton.hardware.http.service.DeviceService;
 import com.naton.hardware.model.Data;
+import com.naton.hardware.model.DeviceInfo;
 import com.naton.hardware.ui.data.chart.SingleLineChart;
+import com.naton.hardware.ui.device.activity.ImagePagerActivity;
+import com.snail.pulltorefresh.PullToRefreshBase;
+import com.snail.pulltorefresh.PullToRefreshScrollView;
+import com.squareup.picasso.Picasso;
 
 import org.achartengine.GraphicalView;
 
@@ -42,11 +54,14 @@ public class DataFragment extends Fragment {
 
     private static final String ARG = "deviceID";
 
+    private PullToRefreshScrollView scrollView;
+
     private GraphicalView temperatureChart;
     private GraphicalView humidityChart;
     private GraphicalView sunshineChart;
 
-    private TextView deviceName;
+    private TextView deviceName,temperature,humidity,sunshine;
+    private RoundedImageView deviceImage;
     private LinearLayout temperatureLL;
     private LinearLayout humidityLL;
     private LinearLayout sunshineLL;
@@ -74,17 +89,75 @@ public class DataFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_data, container, false);
 
+        scrollView = (PullToRefreshScrollView)v.findViewById(R.id.scroll);
+        scrollView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ScrollView>() {
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<ScrollView> refreshView) {
+                if (AuthManager.getInstance().isAuthenticated()) {
+                    fetchDeviceInfo( getArguments().getString(ARG));
+                    fetchDeviceData(getArguments().getString(ARG));
+                }
+            }
+
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<ScrollView> refreshView) {
+
+            }
+        });
+
         deviceName = (TextView) v.findViewById(R.id.deviceName);
-        deviceName.setText("设备" + getArguments().getString(ARG));
+        deviceName.setText("设备:\n" + getArguments().getString(ARG));
+        temperature = (TextView) v.findViewById(R.id.temperature);
+        humidity = (TextView) v.findViewById(R.id.humidity);
+        sunshine = (TextView) v.findViewById(R.id.sunshine);
+
+        deviceImage = (RoundedImageView)v.findViewById(R.id.deviceImage);
 
         temperatureLL = (LinearLayout) v.findViewById(R.id.linechart1);
         humidityLL = (LinearLayout) v.findViewById(R.id.linechart2);
         sunshineLL = (LinearLayout) v.findViewById(R.id.linechart3);
 
         if (AuthManager.getInstance().isAuthenticated()) {
+            fetchDeviceInfo( getArguments().getString(ARG));
             fetchDeviceData(getArguments().getString(ARG));
         }
         return v;
+    }
+
+    private void fetchDeviceInfo(String deviceId) {
+        DeviceService deviceService = RestManager.getInstance().create(DeviceService.class);
+        String userId = AuthManager.getInstance().getAccessToken().getUserId();
+        deviceService.fetchDeviceInfo(new DeviceRequest(userId, deviceId), new Callback<DeviceInfoResult>() {
+            @Override
+            public void success(DeviceInfoResult result, Response response) {
+                if (result.code == 1) {
+                    final DeviceInfo deviceInfo = result.result_data;
+                    if (!TextUtils.isEmpty(deviceInfo.getImage())){
+                        temperature.setText("温度：\n"+deviceInfo.getTemperate());
+                        humidity.setText("湿度:\n" + deviceInfo.getHumedity());
+                        sunshine.setText("光照:\n"+deviceInfo.getLightStatue());
+                        Picasso.with(getActivity()).load(deviceInfo.getImage()).into(deviceImage);
+                        deviceImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
+                                ArrayList<String> imageUrls = new ArrayList<String>();
+                                imageUrls.add(deviceInfo.getImage());
+                                intent.putStringArrayListExtra("image_urls", imageUrls);
+                                intent.putExtra("image_index",0);
+                                startActivity(intent);
+                            }
+                        });
+                    }
+                }
+                scrollView.onRefreshComplete();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                scrollView.onRefreshComplete();
+            }
+        });
     }
 
     public void fetchDeviceData(String deviceId) {

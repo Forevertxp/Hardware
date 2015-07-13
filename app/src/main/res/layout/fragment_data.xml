@@ -5,7 +5,7 @@
     android:background="@drawable/bg1"
     tools:context=".MainActivity">
 
-    <ScrollView
+    <com.snail.pulltorefresh.PullToRefreshScrollView
         android:id="@+id/scroll"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -20,12 +20,60 @@
             android:paddingRight="5dp"
             android:paddingTop="5dp">
 
-            <TextView
-                android:id="@+id/deviceName"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:layout_height="200dp"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/deviceName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_marginTop="2dp"/>
+
+                    <TextView
+                        android:id="@+id/temperature"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_marginTop="2dp"/>
+
+                    <TextView
+                        android:id="@+id/humidity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_marginTop="2dp"/>
+
+                    <TextView
+                        android:id="@+id/sunshine"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_marginTop="2dp"/>
+
+                </LinearLayout>
+
+                <com.github.siyamed.shapeimageview.RoundedImageView
+                    android:id="@+id/deviceImage"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:layout_weight="1" />
+
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -183,6 +231,6 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </com.snail.pulltorefresh.PullToRefreshScrollView>
 
 </RelativeLayout>

@@ -15,4 +15,20 @@ public class DeviceInfo extends ServiceResult {
     public String getImage() {
         return image;
     }
+
+    public String getTemperate() {
+        return temperate;
+    }
+
+    public String getHumedity() {
+        return humedity;
+    }
+
+    public String getLightStatue() {
+        return lightStatue;
+    }
+
+    public String getDustStatue() {
+        return dustStatue;
+    }
 }
