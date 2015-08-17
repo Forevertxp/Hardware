@@ -61,7 +61,7 @@ public class UserHeaderView extends FrameLayout {
     private void updateAvatarImageView() {
         String avatarUrl = "";
         if (_user != null && _user.getAvatar() != null) {
-            avatarUrl = NTConfig.getInstance().getIMAGEBaseURL() + "/SDpic/common/picSelect?gid=" + _user.getAvatar();
+            avatarUrl = _user.getAvatar();
             DisplayImageOptions options = new DisplayImageOptions.Builder()//
                     .cacheInMemory(true)//
                     .cacheOnDisk(true)//

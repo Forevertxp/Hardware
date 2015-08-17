@@ -1,6 +1,6 @@
 package com.naton.hardware.http.service;
 
-import com.naton.hardware.http.result.CommonResult;
+import com.naton.hardware.http.result.UploadResult;
 
 import retrofit.Callback;
 import retrofit.http.Multipart;
@@ -20,5 +20,5 @@ public interface UploadService {
                             @Part("width") int width,
                             @Part("height") int height,
                             @Part("picType") String picType,
-                            Callback<CommonResult> cb);
+                            Callback<UploadResult> cb);
 }

@@ -18,13 +18,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.naton.hardware.app.NTAPP"
+        android:name=".app.NTAPP"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.naton.hardware.ui.main.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,36 +33,44 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.naton.hardware.ui.device.activity.ImagePagerActivity"
+            android:name=".ui.device.activity.ImagePagerActivity"
             android:label="" >
         </activity>
         <activity
-            android:name="com.naton.hardware.ui.user.LoginActivity"
+            android:name=".ui.user.LoginActivity"
             android:label="" >
         </activity>
         <activity
-            android:name="com.naton.hardware.ui.user.ModifyPassActivity"
+            android:name=".ui.user.ModifyPassActivity"
             android:label="" >
         </activity>
         <activity
-            android:name="com.naton.hardware.ui.user.RegisterActivity"
+            android:name=".ui.user.RegisterActivity"
             android:label="" >
         </activity>
         <activity
-            android:name="com.naton.hardware.ui.user.UserPasswordActivity"
+            android:name=".ui.user.UserPasswordActivity"
             android:label="" >
         </activity>
         <activity
-            android:name="com.naton.hardware.ui.user.UserEditActivity"
+            android:name=".ui.user.UserEditActivity"
             android:label="" >
         </activity>
         <activity
-            android:name="com.naton.hardware.ui.device.DeviceDetailActivity"
+            android:name=".ui.device.DeviceDetailActivity"
             android:label="@string/title_activity_device_detail" >
         </activity>
         <activity
-            android:name="com.naton.hardware.ui.device.DeviceAddActivity"
+            android:name=".ui.device.DeviceAddActivity"
             android:label="@string/title_activity_device_add" >
+        </activity>
+        <activity
+            android:name=".ui.device.ManualActivity"
+            android:label="@string/title_activity_manual" >
+        </activity>
+        <activity
+            android:name=".ui.device.AutoActivity"
+            android:label="@string/title_activity_auto" >
         </activity>
     </application>
 

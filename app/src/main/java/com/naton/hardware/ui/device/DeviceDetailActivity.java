@@ -19,6 +19,7 @@ import android.widget.Gallery;
 import android.widget.Gallery.LayoutParams;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ViewSwitcher;
 
 import com.naton.hardware.BaseActivity;
@@ -26,16 +27,24 @@ import com.naton.hardware.R;
 import com.naton.hardware.http.manager.AuthManager;
 import com.naton.hardware.http.manager.RestManager;
 import com.naton.hardware.http.request.DeviceRequest;
+import com.naton.hardware.http.request.ImageRequest;
+import com.naton.hardware.http.request.PicDelRequest;
 import com.naton.hardware.http.result.CommonResult;
 import com.naton.hardware.http.result.DeviceInfoResult;
+import com.naton.hardware.http.result.ImageResult;
+import com.naton.hardware.http.result.PicResult;
 import com.naton.hardware.http.service.DeviceService;
 import com.naton.hardware.model.DeviceInfo;
+import com.naton.hardware.model.Image;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.snail.svprogresshud.SVProgressHUD;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -48,15 +57,21 @@ public class DeviceDetailActivity extends BaseActivity implements AdapterView.On
     private Gallery gallery;
     private ImageSwitcher mSwitcher;
 
-    private DeviceInfo deviceInfo;
+    private String deviceId;
     private ArrayList<String> imageList = new ArrayList<String>();
+
+    private RelativeLayout autoRL, manualRL;
+
+    private Button takePic, deletePic;
+
+    private String url;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_detail);
-        final String deviceId = getIntent().getStringExtra("deviceId");
+        deviceId = getIntent().getStringExtra("deviceId");
         setTitleText("设备" + deviceId);
         setRightImage(R.drawable.ic_delete);
         setRightImageListener(new View.OnClickListener() {
@@ -81,13 +96,34 @@ public class DeviceDetailActivity extends BaseActivity implements AdapterView.On
         });
 
         if (!TextUtils.isEmpty(deviceId))
-            fetchDeviceInfo(deviceId);
+            fetchDevicePic(deviceId,"");
 
         delBtn = (Button) findViewById(R.id.delBtn);
         delBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+            }
+        });
+
+        autoRL = (RelativeLayout) findViewById(R.id.autoRL);
+        manualRL = (RelativeLayout) findViewById(R.id.manualRL);
+
+        autoRL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DeviceDetailActivity.this, AutoActivity.class);
+                intent.putExtra("deviceId", deviceId);
+                startActivity(intent);
+            }
+        });
+
+        manualRL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DeviceDetailActivity.this, ManualActivity.class);
+                intent.putExtra("deviceId", deviceId);
+                startActivity(intent);
             }
         });
 
@@ -100,22 +136,81 @@ public class DeviceDetailActivity extends BaseActivity implements AdapterView.On
 
         gallery = (Gallery) findViewById(R.id.gallery);
         gallery.setOnItemSelectedListener(this);
+
+        takePic = (Button) findViewById(R.id.takeBtn);
+        takePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePic(deviceId);
+            }
+        });
+
+        deletePic = (Button) findViewById(R.id.delBtn);
+        deletePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(DeviceDetailActivity.this)
+                        .setTitle("请确认")
+                        .setMessage("确认删除吗？")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                DeviceService deviceService = RestManager.getInstance().create(DeviceService.class);
+                                if (!TextUtils.isEmpty(url)){
+                                    deviceService.delImage(new PicDelRequest(deviceId,url),new Callback<CommonResult>() {
+                                        @Override
+                                        public void success(CommonResult result, Response response) {
+                                            if (result.code == 1) {
+                                                fetchDevicePic(deviceId,"");
+                                            }
+                                        }
+
+                                        @Override
+                                        public void failure(RetrofitError error) {
+
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .show();
+
+            }
+        });
     }
 
-    private void fetchDeviceInfo(String deviceId) {
+    private void fetchDevicePic(String deviceId, final String newImgUrl) {
         DeviceService deviceService = RestManager.getInstance().create(DeviceService.class);
-        String userId = AuthManager.getInstance().getAccessToken().getUserId();
-        deviceService.fetchDeviceInfo(new DeviceRequest(userId, deviceId), new Callback<DeviceInfoResult>() {
+        Calendar calendar = Calendar.getInstance();
+        // 默认显示一周内数据
+        String dateEnd = new SimpleDateFormat("yyyyMMddHHmmss").format(calendar
+                .getTime()); // 当前日期
+        calendar.add(Calendar.MONTH, -1); // 一个月前日期
+        String dateBegin = new SimpleDateFormat("yyyyMMddHHmmss").format(calendar
+                .getTime());
+        deviceService.fetchImageList(new ImageRequest(deviceId, dateBegin, dateEnd, 0, 100), new Callback<ImageResult>() {
             @Override
-            public void success(DeviceInfoResult result, Response response) {
+            public void success(ImageResult result, Response response) {
                 if (result.code == 1) {
-                    deviceInfo = result.result_data;
-                    if (!TextUtils.isEmpty(deviceInfo.getImage())){
-                        mSwitcher.setVisibility(View.VISIBLE);
-                        gallery.setVisibility(View.VISIBLE);
-                        imageList.add(deviceInfo.getImage());
-                        gallery.setAdapter(new GalleryAdapter(DeviceDetailActivity.this,imageList));
+                    if(imageList.size()>0){
+                        imageList.clear();
                     }
+                    ArrayList<Image> imgList = result.result_data;
+                    if(!TextUtils.isEmpty(newImgUrl)){
+                        imageList.add(newImgUrl);
+                    }
+                    if (imgList.size() > 0) {
+                        for (Image image : imgList) {
+                            imageList.add(image.getImage());
+                        }
+                    }
+                    mSwitcher.setVisibility(View.VISIBLE);
+                    gallery.setVisibility(View.VISIBLE);
+                    gallery.setAdapter(new GalleryAdapter(DeviceDetailActivity.this, imageList));
                 }
             }
 
@@ -147,12 +242,29 @@ public class DeviceDetailActivity extends BaseActivity implements AdapterView.On
         });
     }
 
+    private void takePic(final String deviceId) {
+        DeviceService deviceService = RestManager.getInstance().create(DeviceService.class);
+        deviceService.takePic(new DeviceRequest("", deviceId), new Callback<PicResult>() {
+            @Override
+            public void success(PicResult result, Response response) {
+                if (result.code == 1) {
+                    fetchDevicePic(deviceId,result.result_data.getImage());
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
 
 
     @Override
     public void onItemSelected(AdapterView<?> adapter, View v, int position,
                                long id) {
-        ImageLoader.getInstance().loadImage(imageList.get(position),new ImageLoadingListener() {
+        url = imageList.get(position);
+        ImageLoader.getInstance().loadImage(imageList.get(position), new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
 
@@ -191,7 +303,6 @@ public class DeviceDetailActivity extends BaseActivity implements AdapterView.On
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         return i;
     }
-
 
 
     private class GalleryAdapter extends BaseAdapter {

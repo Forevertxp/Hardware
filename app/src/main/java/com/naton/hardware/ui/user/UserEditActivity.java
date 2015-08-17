@@ -29,6 +29,7 @@ import com.naton.hardware.http.HttpCallBack;
 import com.naton.hardware.http.manager.UserManager;
 import com.naton.hardware.http.result.CommonResult;
 import com.naton.hardware.http.result.ServiceError;
+import com.naton.hardware.http.result.UploadResult;
 import com.naton.hardware.http.service.UploadService;
 import com.naton.hardware.model.User;
 import com.naton.hardware.util.FileUtils;
@@ -106,7 +107,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
 
     private void initData() {
         Picasso.with(this)
-                .load(NTConfig.getInstance().getIMAGEBaseURL() + "/SDpic/common/picSelect?gid=" + "1cbd07c5-c5e5-41aa-b02d-abb240e417f1")
+                .load(userInfo.getAvatar())
                 .error(R.drawable.ic_avatar_default)
                 .into(avatarImage);
         nameText.setText(userInfo.getName());
@@ -123,7 +124,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.avatarRL:
-//                showDialog();
+                showDialog();
                 break;
             case R.id.sexRL:
                 editSex();
@@ -146,7 +147,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
 //                });
 //                areaPopupWindow.showAtLocation(UserEditActivity.this.findViewById(R.id.main),
 //                        Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
-//                break;
+                break;
             case R.id.signatureRL:
                 editSignature();
                 break;
@@ -282,13 +283,13 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
             File imageFile = new File(tempPath);
             TypedFile typedFile = new TypedFile("application/octet-stream", imageFile);
 
-            service.uploadImage(typedFile, 0, 480, 320, "png", new Callback<CommonResult>() {
+            service.uploadImage(typedFile, 0, 480, 320, "png", new Callback<UploadResult>() {
                 @Override
-                public void success(CommonResult result, Response response) {
-//                    if (result.getImgGid() != null) {
-//                        String gid = result.getImgGid();
-//                        updateUserInfo(gid);
-//                    }
+                public void success(UploadResult result, Response response) {
+                    if (result.imgGid != null) {
+                        String url = NTConfig.getInstance().getIMAGEBaseURL() + "/SDpic/common/picSelect?gid=" + result.imgGid;
+                        updateUserInfo(url);
+                    }
                 }
 
                 @Override
@@ -299,7 +300,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private void updateUserInfo(String avatarGId) {
+    private void updateUserInfo(String avatarUrl) {
         SVProgressHUD.showInView(UserEditActivity.this, "保存中...", false);
         String sexCode;
         if (sexText.getText().toString().equals("男")) {
@@ -308,7 +309,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
             sexCode = "2";
         }
         UserManager.getInstance().updateUserInfo(nameText.getText().toString(),"email", sexCode, "birthday",localText.getText().toString(),
-                signatureText.getText().toString(), "avatar", jobText.getText().toString(), new HttpCallBack() {
+                signatureText.getText().toString(), avatarUrl, jobText.getText().toString(), new HttpCallBack() {
                     @Override
                     public void success() {
                         SVProgressHUD.dismiss(UserEditActivity.this);
@@ -325,33 +326,33 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
     }
 
 
-//    private FetchPhotoDialog mFetchPhotoDialog;
-//
-//    private void showDialog() {
-//        if (mFetchPhotoDialog == null) {
-//            mFetchPhotoDialog = new FetchPhotoDialog(this);
-//            mFetchPhotoDialog.setFetchPhoteClickListener(mFetchPhotoClickListener);
-//        }
-//        mFetchPhotoDialog.show();
-//    }
-//
-//    private final FetchPhotoDialog.FetchPhotoClickListener mFetchPhotoClickListener = new FetchPhotoDialog.FetchPhotoClickListener() {
-//        @Override
-//        public void fetchFromAblumClick() {
-//            openPhotoLibrary(REQUEST_PHOTO_LIBRARY);
-//
-//        }
-//
-//        @Override
-//        public void fetchFromCameraClick() {
-//            mImageUri = openCapture(REQUEST_IMAGE_CAPTURE);
-//        }
-//
-//        @Override
-//        public void cancelClick() {
-//
-//        }
-//    };
+    private FetchPhotoDialog mFetchPhotoDialog;
+
+    private void showDialog() {
+        if (mFetchPhotoDialog == null) {
+            mFetchPhotoDialog = new FetchPhotoDialog(this);
+            mFetchPhotoDialog.setFetchPhoteClickListener(mFetchPhotoClickListener);
+        }
+        mFetchPhotoDialog.show();
+    }
+
+    private final FetchPhotoDialog.FetchPhotoClickListener mFetchPhotoClickListener = new FetchPhotoDialog.FetchPhotoClickListener() {
+        @Override
+        public void fetchFromAblumClick() {
+            openPhotoLibrary(REQUEST_PHOTO_LIBRARY);
+
+        }
+
+        @Override
+        public void fetchFromCameraClick() {
+            mImageUri = openCapture(REQUEST_IMAGE_CAPTURE);
+        }
+
+        @Override
+        public void cancelClick() {
+
+        }
+    };
 
     /**
      * 调用相机和相册后的回调
