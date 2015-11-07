@@ -19,7 +19,8 @@ public class NTAPP extends Application {
         NTThemer.getInstance().setActionBarBackgroundColor(getResources().getColor(R.color.ActionBarBackgroundColor));
         NTThemer.getInstance().setActionBarForegroundColor(getResources().getColor(R.color.ActionBarForegroundColor));
 
-        final String API_BASE_URL = "http://xc1942.xicp.net:9000";
+        //final String API_BASE_URL = "http://xc1942.xicp.net:9000";
+        final String API_BASE_URL = "http://112.74.210.120:8080";
         final String IMAGE_BASE_URL = "http://upload.orthoday.com";
         NTConfig.getInstance().init(API_BASE_URL,IMAGE_BASE_URL, "v1.0", this);
 

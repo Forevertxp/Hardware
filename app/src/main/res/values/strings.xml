@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">智能硬件</string>
+    <string name="app_name">一米田园</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -18,4 +18,5 @@
     <string name="sure_to_delete">确定要删除吗</string>
     <string name="ok">确定</string>
     <string name="cancel_message">取消</string>
+    <string name="title_activity_new_main">NewMainActivity</string>
 </resources>
