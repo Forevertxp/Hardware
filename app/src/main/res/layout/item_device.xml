@@ -4,13 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="5dp"
-    android:paddingTop="5dp">
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/BackGround"/>
 
     <com.github.siyamed.shapeimageview.RoundedImageView
         android:id="@+id/iv_avatar"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_margin="5dp"
+        android:layout_below="@+id/divider"
         app:siRadius="6dp"
         app:siBorderWidth="0dp"
         app:siBorderColor="@color/lightgrey"
@@ -21,11 +28,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:layout_toRightOf="@id/iv_avatar"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textColor="#3b3b3b"
+        android:textColor="#4e4e4e"
         android:textSize="16sp" />
 
     <TextView
@@ -34,11 +41,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_title"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="5dp"
         android:maxLines="2"
         android:ellipsize="end"
         android:layout_toRightOf="@id/iv_avatar"
-        android:textColor="#b3b3b3"
+        android:textColor="#4e4e4e"
         android:textSize="14sp" />
 
 </RelativeLayout>

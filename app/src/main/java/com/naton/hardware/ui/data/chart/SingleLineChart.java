@@ -75,6 +75,7 @@ public class SingleLineChart {
         mRenderer.setXAxisMax(time1);
         mRenderer.setXAxisMin(time2);
         mRenderer.setXLabels(30);
+        mRenderer.setGridColor(Color.LTGRAY);
         //设置Y轴最大和最小值
         mRenderer.setYAxisMax(maxY * 1.05);
         mRenderer.setYAxisMin(minY * 0.95);
@@ -100,7 +101,7 @@ public class SingleLineChart {
         renderer.setFillPoints(true);
         renderer.setDisplayChartValues(false);
         // renderer.setDisplayChartValuesDistance(100);
-        renderer.setColor(Color.WHITE);
+        renderer.setColor(0xFF00D054);
         renderer.setLineWidth(3);
         mRenderer.addSeriesRenderer(renderer);
         return mRenderer;

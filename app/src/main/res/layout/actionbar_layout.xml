@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#00bb94"
     android:gravity="center_vertical"
     android:paddingLeft="10dp"
     android:paddingRight="10dp">
@@ -21,8 +22,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
         android:text="标题" />
 
     <ImageButton
@@ -41,7 +42,7 @@
         android:layout_centerVertical="true"
         android:textSize="16sp"
         android:padding="5dp"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:background="@null" />
 
 </RelativeLayout>  

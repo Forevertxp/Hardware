@@ -1,6 +1,7 @@
 package com.naton.hardware.ui.device;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -22,6 +23,8 @@ public class DeviceAdapter extends BaseAdapter {
 
     private Context context;
     private List<Device> deviceList;
+
+    int[] imgs = {R.drawable.ic_device1,R.drawable.ic_device2,R.drawable.ic_device3,R.drawable.ic_device4};
 
     public DeviceAdapter(Context context, ArrayList<Device> deviceList) {
         super();
@@ -60,12 +63,15 @@ public class DeviceAdapter extends BaseAdapter {
         final Device device = deviceList.get(position);
         holder.tv_title.setText("设备名称： " + device.getDeviceName());
         holder.tv_content.setText("设备编号： " + device.getDeviceId());
-        String imageUrl = "http://pic.nipic.com/2007-11-09/2007119122519868_2.jpg";
-        Picasso.with(context)
-                .load(imageUrl)
-                .placeholder(R.drawable.ic_avatar_default)
-                .error(R.drawable.ic_avatar_default)
-                .into(holder.iv_avatar);
+
+        int i = (int)(Math.random()*4);
+//        String imageUrl = "http://pic.nipic.com/2007-11-09/2007119122519868_2.jpg";
+//        Picasso.with(context)
+//                .load(imageUrl)
+//                .placeholder(R.drawable.ic_avatar_default)
+//                .error(R.drawable.ic_avatar_default)
+//                .into(holder.iv_avatar);
+        holder.iv_avatar.setImageResource(imgs[i]);
         return convertView;
     }
 

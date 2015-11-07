@@ -60,7 +60,7 @@ public class DataFragment extends Fragment {
     private GraphicalView humidityChart;
     private GraphicalView sunshineChart;
 
-    private TextView deviceName,temperature,humidity,sunshine;
+    private TextView deviceName, temperature, humidity, sunshine;
     private RoundedImageView deviceImage;
     private LinearLayout temperatureLL;
     private LinearLayout humidityLL;
@@ -89,12 +89,12 @@ public class DataFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_data, container, false);
 
-        scrollView = (PullToRefreshScrollView)v.findViewById(R.id.scroll);
+        scrollView = (PullToRefreshScrollView) v.findViewById(R.id.scroll);
         scrollView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ScrollView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ScrollView> refreshView) {
                 if (AuthManager.getInstance().isAuthenticated()) {
-                    fetchDeviceInfo( getArguments().getString(ARG));
+                    fetchDeviceInfo(getArguments().getString(ARG));
                     fetchDeviceData(getArguments().getString(ARG));
                 }
             }
@@ -111,14 +111,14 @@ public class DataFragment extends Fragment {
         humidity = (TextView) v.findViewById(R.id.humidity);
         sunshine = (TextView) v.findViewById(R.id.sunshine);
 
-        deviceImage = (RoundedImageView)v.findViewById(R.id.deviceImage);
+        deviceImage = (RoundedImageView) v.findViewById(R.id.deviceImage);
 
         temperatureLL = (LinearLayout) v.findViewById(R.id.linechart1);
         humidityLL = (LinearLayout) v.findViewById(R.id.linechart2);
         sunshineLL = (LinearLayout) v.findViewById(R.id.linechart3);
 
         if (AuthManager.getInstance().isAuthenticated()) {
-            fetchDeviceInfo( getArguments().getString(ARG));
+            fetchDeviceInfo(getArguments().getString(ARG));
             fetchDeviceData(getArguments().getString(ARG));
         }
         return v;
@@ -132,10 +132,10 @@ public class DataFragment extends Fragment {
             public void success(DeviceInfoResult result, Response response) {
                 if (result.code == 1) {
                     final DeviceInfo deviceInfo = result.result_data;
-                    if (!TextUtils.isEmpty(deviceInfo.getImage())){
-                        temperature.setText("温度：\n"+deviceInfo.getTemperate());
-                        humidity.setText("湿度:\n" + deviceInfo.getHumedity());
-                        sunshine.setText("光照:\n"+deviceInfo.getLightStatue());
+                    if (!TextUtils.isEmpty(deviceInfo.getImage())) {
+                        temperature.setText(deviceInfo.getTemperate());
+                        humidity.setText(deviceInfo.getHumedity());
+                        sunshine.setText(deviceInfo.getLightStatue());
                         Picasso.with(getActivity()).load(deviceInfo.getImage()).into(deviceImage);
                         deviceImage.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -144,10 +144,12 @@ public class DataFragment extends Fragment {
                                 ArrayList<String> imageUrls = new ArrayList<String>();
                                 imageUrls.add(deviceInfo.getImage());
                                 intent.putStringArrayListExtra("image_urls", imageUrls);
-                                intent.putExtra("image_index",0);
+                                intent.putExtra("image_index", 0);
                                 startActivity(intent);
                             }
                         });
+                    }else {
+                        deviceImage.setImageResource(R.drawable.ic_device_default);
                     }
                 }
                 scrollView.onRefreshComplete();
@@ -175,7 +177,7 @@ public class DataFragment extends Fragment {
             @Override
             public void success(DataResult result, Response response) {
                 if (result.code == 1) {
-                    dataList = result.result_data;
+                    dataList = getDataWithoutRepetition(result.result_data);
                     if (dataList.size() > 0) {
                         Date[] dateArray = new Date[dataList.size()];
                         double[] temperatureArray = new double[dataList.size()];
@@ -199,21 +201,23 @@ public class DataFragment extends Fragment {
                             return;
                         }
                         Calendar calendar = Calendar.getInstance();
-                        SingleLineChart singleLineChart = new SingleLineChart();
-                        temperatureChart = singleLineChart.drawChart(getActivity(),
+                        SingleLineChart temperatureLineChart = new SingleLineChart();
+                        temperatureChart = temperatureLineChart.drawChart(getActivity(),
                                 dateArray, temperatureArray, new SimpleDateFormat("yyyy-MM-dd").format(calendar
                                         .getTime()));
                         temperatureLL.addView(temperatureChart, new RelativeLayout.LayoutParams(
                                 RelativeLayout.LayoutParams.MATCH_PARENT,
                                 RelativeLayout.LayoutParams.MATCH_PARENT));
-                        humidityChart = singleLineChart.drawChart(getActivity(),
-                                dateArray, temperatureArray, new SimpleDateFormat("yyyy-MM-dd").format(calendar
+                        SingleLineChart huimidityLineChart = new SingleLineChart();
+                        humidityChart = huimidityLineChart.drawChart(getActivity(),
+                                dateArray, humidityArray, new SimpleDateFormat("yyyy-MM-dd").format(calendar
                                         .getTime()));
                         humidityLL.addView(humidityChart, new RelativeLayout.LayoutParams(
                                 RelativeLayout.LayoutParams.MATCH_PARENT,
                                 RelativeLayout.LayoutParams.MATCH_PARENT));
-                        sunshineChart = singleLineChart.drawChart(getActivity(),
-                                dateArray, humidityArray, new SimpleDateFormat("yyyy-MM-dd").format(calendar
+                        SingleLineChart sunshineLineChart = new SingleLineChart();
+                        sunshineChart = sunshineLineChart.drawChart(getActivity(),
+                                dateArray, sunshineArray, new SimpleDateFormat("yyyy-MM-dd").format(calendar
                                         .getTime()));
                         sunshineLL.addView(sunshineChart, new RelativeLayout.LayoutParams(
                                 RelativeLayout.LayoutParams.MATCH_PARENT,
@@ -226,6 +230,23 @@ public class DataFragment extends Fragment {
             public void failure(RetrofitError error) {
             }
         });
+    }
+
+    // 每天只显示一个数据，去除重复数据
+    private ArrayList<Data> getDataWithoutRepetition(ArrayList<Data> dataWithRepetition) {
+
+        ArrayList<Data> dataWithoutRepetition = new ArrayList<Data>();
+        for (int i = 0; i < dataWithRepetition.size(); i++) {
+            if (i == 0) {
+                dataWithoutRepetition.add(dataWithRepetition.get(0));
+            } else {
+                String a = dataWithRepetition.get(i).getDatetime().substring(0, 8);
+                if (!dataWithRepetition.get(i).getDatetime().substring(0, 8).equals(dataWithRepetition.get(i - 1).getDatetime().substring(0, 8))) {
+                    dataWithoutRepetition.add(dataWithRepetition.get(i));
+                }
+            }
+        }
+        return dataWithoutRepetition;
     }
 
     @Override

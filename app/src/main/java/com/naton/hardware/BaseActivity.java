@@ -67,6 +67,11 @@ public class BaseActivity extends FragmentActivity {
         rightImage.setImageResource(resid);
     }
 
+    public void setLeftImage(int resid) {
+        leftImage.setVisibility(View.VISIBLE);
+        leftImage.setImageResource(resid);
+    }
+
     public void setRightImageInvisibility() {
         rightImage.setVisibility(View.GONE);
     }
@@ -77,6 +82,10 @@ public class BaseActivity extends FragmentActivity {
 
     public void setRightImageListener(View.OnClickListener l) {
         rightImage.setOnClickListener(l);
+    }
+
+    public void setLeftImageListener(View.OnClickListener l) {
+        leftImage.setOnClickListener(l);
     }
 
     public void setRightText(String text) {

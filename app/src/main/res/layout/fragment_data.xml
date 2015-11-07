@@ -2,14 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg1"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
     <com.snail.pulltorefresh.PullToRefreshScrollView
         android:id="@+id/scroll"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginBottom="40.0dip"
+        android:scrollbars="none"
         android:foregroundGravity="center_horizontal">
 
         <LinearLayout
@@ -20,109 +20,193 @@
             android:paddingRight="5dp"
             android:paddingTop="5dp">
 
+
+            <com.github.siyamed.shapeimageview.RoundedImageView
+                android:id="@+id/deviceImage"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_margin="5dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/ic_sun" />
+
+            <TextView
+                android:id="@+id/deviceName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#4e4e4e"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_margin="10dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_weight="1">
 
                     <TextView
-                        android:id="@+id/deviceName"
+                        android:id="@+id/temperatureName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:layout_marginTop="2dp"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:text="温度"
+                        android:textColor="#4e4e4e"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/temperatureImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/temperatureName"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:background="@drawable/ic_temperature" />
 
                     <TextView
                         android:id="@+id/temperature"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:layout_marginTop="2dp"/>
+                        android:layout_below="@+id/temperatureImage"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:textColor="#4e4e4e"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="1dp"
+                        android:layout_height="70dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@color/lightgrey" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/humidityName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:text="湿度"
+                        android:textColor="#4e4e4e"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/humidityImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/humidityName"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:background="@drawable/ic_humility" />
 
                     <TextView
                         android:id="@+id/humidity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:layout_marginTop="2dp"/>
+                        android:layout_below="@+id/humidityImage"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:textColor="#4e4e4e"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="1dp"
+                        android:layout_height="70dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@color/lightgrey" />
+
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/sunshineName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:text="光照"
+                        android:textColor="#4e4e4e"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/sunshineImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/sunshineName"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:background="@drawable/ic_sunshine" />
+
 
                     <TextView
                         android:id="@+id/sunshine"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:layout_marginTop="2dp"/>
+                        android:layout_below="@+id/sunshineImage"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:textColor="#4e4e4e"
+                        android:textSize="16sp" />
 
-                </LinearLayout>
-
-                <com.github.siyamed.shapeimageview.RoundedImageView
-                    android:id="@+id/deviceImage"
-                    android:layout_width="180dp"
-                    android:layout_height="180dp"
-                    android:layout_weight="1" />
+                </RelativeLayout>
 
 
             </LinearLayout>
 
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/lightgrey" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_item_bg1"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/templl"
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/icon_tendency_temp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingTop="7dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="温度统计"
-                            android:textColor="#ffffff"
-                            android:textSize="15sp" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/line_cross" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="当前温度：22.9°C"
-                            android:textColor="#ffffff"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                    android:text="温度统计"
+                    android:textColor="#4e4e4e"
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:id="@+id/linechart1"
                     android:layout_width="match_parent"
                     android:layout_height="160dp"
+                    android:layout_marginTop="10dp"
                     android:orientation="vertical"></LinearLayout>
 
             </LinearLayout>
@@ -130,102 +214,42 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_item_bg1"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/wetll"
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/icon_tendency_wet" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingTop="7dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="湿度统计"
-                            android:textColor="#ffffff"
-                            android:textSize="15sp" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/line_cross" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="当前湿度：89%"
-                            android:textColor="#ffffff"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                    android:text="湿度统计"
+                    android:textColor="#4e4e4e"
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:id="@+id/linechart2"
                     android:layout_width="match_parent"
                     android:layout_height="160dp"
+                    android:layout_marginTop="10dp"
                     android:orientation="vertical"></LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_item_bg1"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/windll"
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/icon_tendency_wind" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingTop="7dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="光照统计"
-                            android:textColor="#ffffff"
-                            android:textSize="15sp" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/line_cross" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="当前光照：1.3 m/s"
-                            android:textColor="#ffffff"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                    android:text="光照统计"
+                    android:textColor="#4e4e4e"
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:id="@+id/linechart3"
                     android:layout_width="wrap_content"
                     android:layout_height="160dp"
+                    android:layout_marginTop="10dp"
                     android:orientation="vertical">
 
                 </LinearLayout>

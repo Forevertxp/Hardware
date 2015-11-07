@@ -26,11 +26,13 @@ import com.naton.hardware.BaseActivity;
 import com.naton.hardware.R;
 import com.naton.hardware.app.NTConfig;
 import com.naton.hardware.http.HttpCallBack;
+import com.naton.hardware.http.manager.AuthManager;
 import com.naton.hardware.http.manager.UserManager;
 import com.naton.hardware.http.result.CommonResult;
 import com.naton.hardware.http.result.ServiceError;
 import com.naton.hardware.http.result.UploadResult;
 import com.naton.hardware.http.service.UploadService;
+import com.naton.hardware.model.AccessToken;
 import com.naton.hardware.model.User;
 import com.naton.hardware.util.FileUtils;
 import com.snail.svprogresshud.SVProgressHUD;
@@ -38,8 +40,10 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -55,12 +59,14 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
     private RoundedImageView avatarImage;
     private RelativeLayout avatarRL, nameRL, sexRL, localRL, hospitalRL, jobRL, signatureRL;
     private TextView nameText, sexText, localText, hospitalText, jobText, signatureText;
-    private Button updateBtn;
+    private Button logoutBtn;
     private RadioButton male, female;
 
     private String cityCode = "CN11";
 
     private Uri mImageUri;
+
+    private final static String USER_CONFIG_FILENAME = "userInfo.dat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +74,25 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
         setContentView(R.layout.activity_user_edit);
         setTitleText("个人资料");
 
-       userInfo = UserManager.getInstance().loadLocalUserInfo();
-       initViews();
-        if (userInfo != null)
+        userInfo = UserManager.getInstance().loadLocalUserInfo();
+        initViews();
+        if (userInfo != null){
             initData();
+        }
+
+        setRightText("保存");
+        setRightTextListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mImageUri == null) {
+                    updateUserInfo(userInfo.getAvatar());
+                } else {
+                    uploadImage(mImageUri);
+                }
+            }
+        });
+
+
     }
 
     private void initViews() {
@@ -92,7 +113,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
         jobRL = (RelativeLayout) findViewById(R.id.jobRL);
         signatureRL = (RelativeLayout) findViewById(R.id.signatureRL);
 
-        updateBtn = (Button) findViewById(R.id.updateBtn);
+        logoutBtn = (Button) findViewById(R.id.logoutBtn);
 
         avatarRL.setOnClickListener(this);
         nameRL.setOnClickListener(this);
@@ -101,7 +122,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
         hospitalRL.setOnClickListener(this);
         jobRL.setOnClickListener(this);
         signatureRL.setOnClickListener(this);
-        updateBtn.setOnClickListener(this);
+        logoutBtn.setOnClickListener(this);
 
     }
 
@@ -111,7 +132,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                 .error(R.drawable.ic_avatar_default)
                 .into(avatarImage);
         nameText.setText(userInfo.getName());
-        if (userInfo.getSex()!=null&&userInfo.getSex().equals("1")) {
+        if (userInfo.getSex() != null && userInfo.getSex().equals("1")) {
             sexText.setText("男");
         } else {
             sexText.setText("女");
@@ -151,15 +172,66 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
             case R.id.signatureRL:
                 editSignature();
                 break;
-            case R.id.updateBtn:
-                if (mImageUri == null) {
-                    updateUserInfo(userInfo.getAvatar());
-                } else {
-                    uploadImage(mImageUri);
-                }
+            case R.id.logoutBtn:
+                logout();
                 break;
         }
 
+    }
+
+    private void logout() {
+        new AlertDialog.Builder(this)
+                .setTitle("请确认")
+                .setMessage("确认退出当前用户吗？")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        AuthManager.getInstance().logout();
+                        save(null);
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * 查询用户基本信息
+     */
+    private void fetchUserInfo(String userId) {
+        final UserManager userManager = UserManager.getInstance();
+        userManager.fetchUserInfo(userId, new HttpCallBack() {
+            @Override
+            public void success() {
+                User userInfo = userManager.getUserInfo();
+                // 保存在本地
+                save(userInfo);
+            }
+
+            @Override
+            public void failure(ServiceError error) {
+
+            }
+        });
+    }
+
+
+    private void save(User userInfo) {
+        try {
+            FileOutputStream fos = NTConfig.getInstance().getContext().openFileOutput(USER_CONFIG_FILENAME, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            if (userInfo != null)
+                oos.writeObject(userInfo);
+            oos.close();
+            //发广播通知更新
+            //NTAPP.getAppContext().sendBroadcast(new Intent(MainActivity.BROADCAST_ACTION_LOGIN_SUCCESS));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void editName() {
@@ -308,12 +380,12 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
         } else {
             sexCode = "2";
         }
-        UserManager.getInstance().updateUserInfo(nameText.getText().toString(),"email", sexCode, "birthday",localText.getText().toString(),
+        UserManager.getInstance().updateUserInfo(nameText.getText().toString(), "email", sexCode, "birthday", localText.getText().toString(),
                 signatureText.getText().toString(), avatarUrl, jobText.getText().toString(), new HttpCallBack() {
                     @Override
                     public void success() {
                         SVProgressHUD.dismiss(UserEditActivity.this);
-                        setResult(Activity.RESULT_OK);
+                        fetchUserInfo(userInfo.getUserId());
                         finish();
                     }
 
@@ -324,6 +396,8 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                 });
 
     }
+
+
 
 
     private FetchPhotoDialog mFetchPhotoDialog;

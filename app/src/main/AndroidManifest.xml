@@ -80,6 +80,10 @@
             android:name=".ui.main_no_tab.NewMainActivity"
             android:label="@string/title_activity_new_main" >
         </activity>
+        <activity
+            android:name=".ui.device.DeviceActivity"
+            android:label="@string/title_activity_device" >
+        </activity>
     </application>
 
 </manifest>
